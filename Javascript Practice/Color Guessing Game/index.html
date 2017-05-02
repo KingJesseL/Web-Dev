@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Javascript Color Guessing Game</title>
+
+	<script type="text/javascript">
+
+	var colors = ["BurlyWood", "Chartreuse", "CornflowerBlue", "Crimson", "DarkBlue", "DarkOrange", "DodgerBlue", "FireBrick", 
+	"GoldenRod", "OrangeRed", "SpringGreen", "SteelBlue"],
+			target_index,
+			target,
+			user_guess,
+			finished = false,
+			guesses = 0,
+			nullCount = 0;
+
+		function play_game() {
+			console.log("playing game...");
+
+			target_index = parseInt((Math.random() * colors.length));
+				console.log("target_index: " + target_index);
+
+			target = colors[target_index];
+				console.log("target: " + target);
+
+			while (!finished) {
+				user_guess = prompt("I am thinking of one of these colors:\n\n" + colors.join(', ') + "\n\n" + "What color am I thinking of?");
+				console.log("User entered: \"" + user_guess + "\"");
+
+				guesses += 1;
+					console.log("Guess #" + guesses);
+
+				// Stop "prevent additional dialog boxes" alert button from crashing tab
+				if(user_guess === null) {
+					nullCount += 1;
+
+					if (nullCount > 25) {
+						finished = true;
+						console.log("User has checked \"Prevent this page from creating additional dialogs\";  Ending loop.");
+						break;
+					}
+				}
+
+				finished = check_guess();
+			}
+		}
+
+
+		// Validation logic for user input
+		function check_guess() {
+			if (colors.indexOf(user_guess) == -1) {
+				alert("Sorry, I don't recognize your color.\n\nPlease try again.");
+				console.log("User's answer was out of scope");
+				return false;
+			}
+
+			if (colors.indexOf(user_guess) > -1 && user_guess < target) {
+				alert("Sorry, your guess is not correct.\n\nHint: Your color is alphabetically lower than mine.\n\nGuess again!");
+					console.log("User's answer is alphabetically lower");
+				return false;
+			}
+
+			if (colors.indexOf(user_guess) > -1 && user_guess > target) {
+				alert("Sorry, your guess is not correct.\n\nHint: Your color is alphabetically higher than mine.\n\nGuess again!");
+					console.log("User's answer is alphabetically higher");
+				return false;
+			}
+
+			document.body.style.backgroundColor = target;
+			// Use setTimeout to re-queue the win-game alert and allow the background color to update at the same time as the alert popup occurs.  This does not seem to work properly in Chrome or IE, but does in Firefox.  Could not find any other way to make it behave in Chrome.  Closest is: 
+			// https://stackoverflow.com/questions/39445382/how-do-i-get-the-alert-message-to-display-at-the-same-time-as-the-change-in-back
+			// Still did not seem to work properly after attempting that.
+			setTimeout(winGame(), 0);
+			return true;
+		}
+
+		// runs when user guesses correctly
+		function winGame() {
+			alert("Congratulations!  You have guessed the color!\n\nIt took you " + guesses + " guess(es) to finish the game.\n\nYou can see the color in the background.\n\n");
+				console.log("User's answer was correct");
+				console.log("Game has ended");
+	}
+	</script>
+
+</head>
+	<body onload="play_game()">
+	</body>
+</html>
